@@ -3,8 +3,6 @@ Dashboard de Focos de Calor na Amazônia - INPE (BDQueimadas)
 Compara 2025 vs 2026. Lê todos os CSVs da pasta dados/.
 Rode com: streamlit run app.py
 """
-import os
-from pathlib import Path
 import glob
 import unicodedata
 
@@ -14,7 +12,7 @@ import plotly.graph_objects as go
 import requests
 import streamlit as st
 
-st.set_page_config(page_title="Focos de Calor no Brasil", page_icon="🔥", layout="wide")
+st.set_page_config(page_title="Focos de Calor na Amazônia", page_icon="🔥", layout="wide")
 
 # ---------------------------------------------------------
 # ESTILO (tema claro padrão, só um leve destaque nos cards)
@@ -27,6 +25,9 @@ st.markdown("""
     border-radius: 10px;
     padding: 14px 16px;
 }
+[data-testid="stMetricValue"] { color: #1a1a1a !important; }
+[data-testid="stMetricLabel"] { color: #555555 !important; }
+[data-testid="stMetricDelta"] { color: #1a1a1a !important; }
 .insight-box {
     background-color: #fff7f0;
     border: 1px solid #ffd9c2;
@@ -34,8 +35,9 @@ st.markdown("""
     border-radius: 10px;
     padding: 16px 20px;
     margin-top: 8px;
+    color: #1a1a1a;
 }
-.insight-box li { margin-bottom: 8px; }
+.insight-box li { margin-bottom: 8px; color: #1a1a1a; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -53,11 +55,7 @@ def normalizar(texto):
 
 @st.cache_data
 def carregar_dados():
-    # Obtém o caminho absoluto da pasta dados ao lado deste app.py
-    base_dir = Path(__file__).resolve().parent
-    pasta_dados = base_dir / "dados"
-    
-    arquivos = list(pasta_dados.glob("*.csv"))
+    arquivos = glob.glob("dados/*.csv")
     if not arquivos:
         return pd.DataFrame()
     partes = []
@@ -99,7 +97,7 @@ def estilizar(fig, altura=380):
 df = carregar_dados()
 if df.empty:
     st.error("Nenhum CSV encontrado. Crie uma pasta 'dados' ao lado do app.py com os "
-             "arquivos exportados do BDQueimadas.")
+              "arquivos exportados do BDQueimadas.")
     st.stop()
 
 MESES = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
@@ -113,7 +111,7 @@ biomas_sel = st.sidebar.multiselect(
     "Bioma", biomas, default=["Amazônia"] if "Amazônia" in biomas else biomas
 )
 so_ref = st.sidebar.checkbox("Só satélite de referência (AQUA)",
-                             value="AQUA_M-T" in df["Satelite"].unique())
+                              value="AQUA_M-T" in df["Satelite"].unique())
 
 d = df[df["Bioma"].isin(biomas_sel)].copy()
 if so_ref:
@@ -150,8 +148,8 @@ estado_top = ranking.iloc[0]
 # CABEÇALHO
 # ---------------------------------------------------------
 st.markdown(f"""
-# Focos de Calor no Brasil
-##### Monitoramento de queimadas e incêndios florestais &nbsp;&nbsp;
+# 🔥 Focos de Calor na Amazônia
+##### Monitoramento de queimadas e incêndios florestais &nbsp;·&nbsp;
 Dados: INPE / Queimadas (Terra Brasilis) &nbsp;·&nbsp; Período: {ano_atual}
 (comparativo com {ano_anterior}, até {ultima:%d/%m})
 """)
@@ -160,7 +158,7 @@ st.divider()
 # ---------------------------------------------------------
 # 1. VISÃO GERAL
 # ---------------------------------------------------------
-st.subheader("1. Visão geral")
+st.subheader("① Visão geral")
 c1, c2, c3 = st.columns(3)
 c1.metric(f"Total de focos em {ano_atual}", f"{total_atual:,}".replace(",", "."),
           help=f"Período: 01/01 a {ultima:%d/%m}")
@@ -178,7 +176,7 @@ st.divider()
 col_mapa, col_rank = st.columns([3, 2])
 
 with col_mapa:
-    st.subheader("2. Mapa por estado")
+    st.subheader("② Mapa por estado")
     try:
         fig = px.choropleth(
             ranking, geojson=carregar_geojson(), locations="estado_chave",
@@ -197,7 +195,7 @@ with col_mapa:
                     .replace(",", "."))
 
 with col_rank:
-    st.subheader("3. Ranking por estado")
+    st.subheader("③ Ranking por estado")
     top = ranking.head(10).sort_values("focos")
     fig = px.bar(top, x="focos", y="Estado", orientation="h", text="focos",
                  color="focos", color_continuous_scale=ESCALA_CORES)
@@ -210,7 +208,7 @@ st.divider()
 # ---------------------------------------------------------
 # 4. EVOLUÇÃO 2025 vs 2026
 # ---------------------------------------------------------
-st.subheader(f"4. Evolução mensal: {ano_anterior} vs {ano_atual}")
+st.subheader(f"④ Evolução mensal: {ano_anterior} vs {ano_atual}")
 mensal = periodo[periodo["ano"].isin([ano_anterior, ano_atual])]
 mensal = mensal.groupby(["ano", "mes"]).size().reset_index(name="focos")
 
@@ -230,7 +228,7 @@ st.divider()
 # ---------------------------------------------------------
 # 5. O QUE OS DADOS MOSTRAM
 # ---------------------------------------------------------
-st.subheader("5. O que os dados mostram")
+st.subheader("⑤ O que os dados mostram")
 
 top3 = ranking.head(3)
 pct_top3 = top3["pct"].sum().round(1)
