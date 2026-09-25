@@ -53,7 +53,11 @@ def normalizar(texto):
 
 @st.cache_data
 def carregar_dados():
-    arquivos = glob.glob("dados/*.csv")
+    # Obtém o caminho absoluto da pasta dados ao lado deste app.py
+    base_dir = Path(__file__).resolve().parent
+    pasta_dados = base_dir / "dados"
+    
+    arquivos = list(pasta_dados.glob("*.csv"))
     if not arquivos:
         return pd.DataFrame()
     partes = []
@@ -95,7 +99,7 @@ def estilizar(fig, altura=380):
 df = carregar_dados()
 if df.empty:
     st.error("Nenhum CSV encontrado. Crie uma pasta 'dados' ao lado do app.py com os "
-              "arquivos exportados do BDQueimadas.")
+             "arquivos exportados do BDQueimadas.")
     st.stop()
 
 MESES = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
@@ -109,7 +113,7 @@ biomas_sel = st.sidebar.multiselect(
     "Bioma", biomas, default=["Amazônia"] if "Amazônia" in biomas else biomas
 )
 so_ref = st.sidebar.checkbox("Só satélite de referência (AQUA)",
-                              value="AQUA_M-T" in df["Satelite"].unique())
+                             value="AQUA_M-T" in df["Satelite"].unique())
 
 d = df[df["Bioma"].isin(biomas_sel)].copy()
 if so_ref:
