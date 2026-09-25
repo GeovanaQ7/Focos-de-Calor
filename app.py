@@ -3,6 +3,8 @@ Dashboard de Focos de Calor na Amazônia - INPE (BDQueimadas)
 Compara 2025 vs 2026. Lê todos os CSVs da pasta dados/.
 Rode com: streamlit run app.py
 """
+import os
+from pathlib import Path
 import glob
 import unicodedata
 
