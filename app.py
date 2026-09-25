@@ -38,6 +38,10 @@ st.markdown("""
     color: #1a1a1a;
 }
 .insight-box li { margin-bottom: 8px; color: #1a1a1a; }
+#MainMenu { visibility: hidden; }
+[data-testid="stMainMenu"] { visibility: hidden; }
+[data-testid="stToolbarActions"] { visibility: hidden; }
+[data-testid="stToolbar"] { visibility: hidden; }
 </style>
 """, unsafe_allow_html=True)
 
