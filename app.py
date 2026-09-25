@@ -12,7 +12,7 @@ import plotly.graph_objects as go
 import requests
 import streamlit as st
 
-st.set_page_config(page_title="Focos de Calor na Amazônia", page_icon="🔥", layout="wide")
+st.set_page_config(page_title="Focos de Calor no Brasil", page_icon="🔥", layout="wide")
 
 # ---------------------------------------------------------
 # ESTILO (tema claro padrão, só um leve destaque nos cards)
@@ -153,7 +153,7 @@ estado_top = ranking.iloc[0]
 # CABEÇALHO
 # ---------------------------------------------------------
 st.markdown(f"""
-# 🔥 Focos de Calor na Amazônia
+# Focos de Calor no Brasil
 ##### Monitoramento de queimadas e incêndios florestais &nbsp;·&nbsp;
 Dados: INPE / Queimadas (Terra Brasilis) &nbsp;·&nbsp; Período: {ano_atual}
 (comparativo com {ano_anterior}, até {ultima:%d/%m})
@@ -163,7 +163,7 @@ st.divider()
 # ---------------------------------------------------------
 # 1. VISÃO GERAL
 # ---------------------------------------------------------
-st.subheader("① Visão geral")
+st.subheader("1. Visão geral")
 c1, c2, c3 = st.columns(3)
 c1.metric(f"Total de focos em {ano_atual}", f"{total_atual:,}".replace(",", "."),
           help=f"Período: 01/01 a {ultima:%d/%m}")
@@ -181,7 +181,7 @@ st.divider()
 col_mapa, col_rank = st.columns([3, 2])
 
 with col_mapa:
-    st.subheader("② Mapa por estado")
+    st.subheader("2. Mapa por estado")
     try:
         fig = px.choropleth(
             ranking, geojson=carregar_geojson(), locations="estado_chave",
@@ -200,7 +200,7 @@ with col_mapa:
                     .replace(",", "."))
 
 with col_rank:
-    st.subheader("③ Ranking por estado")
+    st.subheader("3. Ranking por estado")
     top = ranking.head(10).sort_values("focos")
     fig = px.bar(top, x="focos", y="Estado", orientation="h", text="focos",
                  color="focos", color_continuous_scale=ESCALA_CORES)
@@ -213,7 +213,7 @@ st.divider()
 # ---------------------------------------------------------
 # 4. EVOLUÇÃO 2025 vs 2026
 # ---------------------------------------------------------
-st.subheader(f"④ Evolução mensal: {ano_anterior} vs {ano_atual}")
+st.subheader(f"4. Evolução mensal: {ano_anterior} vs {ano_atual}")
 mensal = periodo[periodo["ano"].isin([ano_anterior, ano_atual])]
 mensal = mensal.groupby(["ano", "mes"]).size().reset_index(name="focos")
 
@@ -233,7 +233,7 @@ st.divider()
 # ---------------------------------------------------------
 # 5. O QUE OS DADOS MOSTRAM
 # ---------------------------------------------------------
-st.subheader("⑤ O que os dados mostram")
+st.subheader("5. O que os dados mostram")
 
 top3 = ranking.head(3)
 pct_top3 = top3["pct"].sum().round(1)
