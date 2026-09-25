@@ -20,24 +20,24 @@ st.set_page_config(page_title="Focos de Calor na Amazônia", page_icon="🔥", l
 st.markdown("""
 <style>
 [data-testid="stMetric"] {
-    background-color: #fafafa;
-    border: 1px solid #e6e6e6;
+    background-color: var(--secondary-background-color);
+    border: 1px solid rgba(128, 128, 128, 0.25);
     border-radius: 10px;
     padding: 14px 16px;
 }
-[data-testid="stMetricValue"] { color: #1a1a1a !important; }
-[data-testid="stMetricLabel"] { color: #555555 !important; }
-[data-testid="stMetricDelta"] { color: #1a1a1a !important; }
+[data-testid="stMetricValue"] { color: var(--text-color) !important; }
+[data-testid="stMetricLabel"] { color: var(--text-color) !important; opacity: 0.75; }
+[data-testid="stMetricDelta"] { color: var(--text-color) !important; }
 .insight-box {
-    background-color: #fff7f0;
-    border: 1px solid #ffd9c2;
+    background-color: var(--secondary-background-color);
+    border: 1px solid rgba(255, 122, 69, 0.35);
     border-left: 4px solid #ff7a45;
     border-radius: 10px;
     padding: 16px 20px;
     margin-top: 8px;
-    color: #1a1a1a;
+    color: var(--text-color);
 }
-.insight-box li { margin-bottom: 8px; color: #1a1a1a; }
+.insight-box li { margin-bottom: 8px; color: var(--text-color); }
 #MainMenu { visibility: hidden; }
 [data-testid="stMainMenu"] { visibility: hidden; }
 [data-testid="stToolbarActions"] { visibility: hidden; }
@@ -89,8 +89,9 @@ def carregar_geojson():
 
 def estilizar(fig, altura=380):
     fig.update_layout(
-        template=PLOTLY_TEMPLATE, paper_bgcolor=PAPER_BG, plot_bgcolor=PAPER_BG,
-        font_color="#333333", height=altura, margin=dict(l=10, r=10, t=30, b=10),
+        paper_bgcolor="white", plot_bgcolor="white",
+        font_color="#333333", height=altura,
+        margin=dict(l=10, r=10, t=30, b=10),
     )
     return fig
 
